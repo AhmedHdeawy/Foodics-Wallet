@@ -11,7 +11,7 @@ readonly class TransactionData
         private float $amount,
         private Carbon $date,
         private string $bank,
-        private array|null $meta = null,
+        private ?array $meta = null,
         private int $clientId = 1,
     ) {}
 

@@ -17,7 +17,7 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
      * Example: 156,50//202506159000001//20250615
      *
      * @param  string  $webhookData  Raw webhook data
-     * @return TransactionData[] Array of parsed transactions
+     * @return array Array of parsed transactions
      */
     public function parseTransactions(string $webhookData): array
     {
