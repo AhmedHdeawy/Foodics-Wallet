@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Transactions\Concretes\TransactionService;
+use App\Services\Transactions\Contracts\TransactionServiceContract;
 use App\Services\Webhooks\Concretes\WebhookService;
 use App\Services\Webhooks\Contracts\WebhookServiceContract;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(WebhookServiceContract::class, WebhookService::class);
+        $this->app->bind(TransactionServiceContract::class, TransactionService::class);
     }
 
     /**
