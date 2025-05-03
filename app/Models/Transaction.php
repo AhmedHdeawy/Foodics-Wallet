@@ -30,6 +30,7 @@ class Transaction extends Model
 {
     /** @use HasFactory<TransactionFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     /**
@@ -45,7 +46,7 @@ class Transaction extends Model
         'bank_name',
         'meta',
         'status',
-        'unique_identifier'
+        'unique_identifier',
     ];
 
     /**

@@ -14,8 +14,7 @@ readonly class TransactionData
         private string $bank_name,
         private array|string|null $meta = null,
         private int $clientId = 1,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

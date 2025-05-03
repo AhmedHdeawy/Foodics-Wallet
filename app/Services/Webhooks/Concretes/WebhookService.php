@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class WebhookService implements WebhookServiceContract
 {
-    public function __construct(protected BankParserFactory $bankParserFactory)
-    {
-    }
+    public function __construct(protected BankParserFactory $bankParserFactory) {}
 
     public function handleReceivedWebhook(array $data): Webhook
     {
@@ -55,10 +53,6 @@ class WebhookService implements WebhookServiceContract
 
     /**
      * Process transactions in chunks
-     *
-     * @param  array  $transactions
-     * @param  int  $chunkSize
-     * @return void
      */
     protected function processTransactionsInChunks(array $transactions, int $chunkSize): void
     {
@@ -71,9 +65,6 @@ class WebhookService implements WebhookServiceContract
 
     /**
      * Process a chunk of transactions.
-     *
-     * @param  array  $transactions
-     * @return void
      */
     private function processTransactionChunk(array $transactions): void
     {
@@ -91,7 +82,7 @@ class WebhookService implements WebhookServiceContract
              */
             // $this->processTransactionsUsingUniqueIdentifier($transactions);
 
-            Log::info("Batch processed ".count($transactions)." new transactions");
+            Log::info('Batch processed '.count($transactions).' new transactions');
 
             DB::commit();
         } catch (Exception $e) {
@@ -99,30 +90,30 @@ class WebhookService implements WebhookServiceContract
         }
     }
 
-    private function processTransactionsUsingUniqueIdentifier(array $transactions): void
-    {
-        // Extract all unique identifiers
-        $uniqueIdentifiers = array_column($transactions, 'unique_identifier');
-
-        // Fetch existing transactions with these identifiers in a single query
-        $existingIdentifiers = Transaction::query()
-            ->whereIn('unique_identifier', $uniqueIdentifiers)
-            ->select('unique_identifier')
-            ->pluck('unique_identifier')
-            ->toArray();
-
-        $newTransactions = array_values(array_filter($transactions, function ($transaction) use ($existingIdentifiers) {
-            if (in_array($transaction['unique_identifier'], $existingIdentifiers)) {
-                // We could store the duplicate transactions in the database for further analysis
-                Log::info("Skipping duplicate transaction: {$transaction['reference']}");
-                return false;
-            }
-
-            return $transaction;
-        }));
-
-        if (!empty($newTransactions)) {
-            Transaction::query()->insertOrIgnore($newTransactions);
-        }
-    }
+    // private function processTransactionsUsingUniqueIdentifier(array $transactions): void
+    // {
+    //     // Extract all unique identifiers
+    //     $uniqueIdentifiers = array_column($transactions, 'unique_identifier');
+    //
+    //     // Fetch existing transactions with these identifiers in a single query
+    //     $existingIdentifiers = Transaction::query()
+    //         ->whereIn('unique_identifier', $uniqueIdentifiers)
+    //         ->select('unique_identifier')
+    //         ->pluck('unique_identifier')
+    //         ->toArray();
+    //
+    //     $newTransactions = array_values(array_filter($transactions, function ($transaction) use ($existingIdentifiers) {
+    //         if (in_array($transaction['unique_identifier'], $existingIdentifiers)) {
+    //             // We could store the duplicate transactions in the database for further analysis
+    //             Log::info("Skipping duplicate transaction: {$transaction['reference']}");
+    //             return false;
+    //         }
+    //
+    //         return $transaction;
+    //     }));
+    //
+    //     if (!empty($newTransactions)) {
+    //         Transaction::query()->insertOrIgnore($newTransactions);
+    //     }
+    // }
 }
