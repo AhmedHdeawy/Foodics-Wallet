@@ -33,7 +33,7 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
                 $transactions[] = $this->mapLineToTransaction($line)->toArray();
             } catch (Exception $e) {
                 // Later, we can store incorrect transactions in a database for further analysis.
-                logger()->error("Error parsing Foodics transaction: {$e->getMessage()}",
+                logger()->error("Error parsing {$this->getBankName()} transaction: {$e->getMessage()}",
                     [
                         'transaction' => $line,
                         'error' => $e->getMessage(),
@@ -59,7 +59,7 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
         $reference = $parts[1];
         $meta = $this->parseMetaData($parts);
 
-        return new TransactionData($reference, $amount, $date, $meta, $this->getBankName());
+        return new TransactionData($reference, $amount, $date, $this->getBankName(), $meta);
     }
 
     public function getBankName(): string

@@ -35,8 +35,6 @@ class WebhookService implements WebhookServiceContract
 
         $transactions = $parser->parseTransactions($webhook->raw_data);
 
-        dd($transactions);
-
         // Process the webhook data here
         $webhook->markAsProcessed();
     }

@@ -10,9 +10,9 @@ readonly class TransactionData
         private string $reference,
         private float $amount,
         private Carbon $date,
-        private array $meta,
         private string $bank,
-        private int $clientId = 1
+        private array|null $meta = null,
+        private int $clientId = 1,
     ) {}
 
     public function toArray(): array
@@ -21,8 +21,8 @@ readonly class TransactionData
             'reference' => $this->reference,
             'amount' => $this->amount,
             'date' => $this->date,
-            'meta' => $this->meta,
             'bank' => $this->bank,
+            'meta' => $this->meta,
             'client_id' => $this->clientId,
         ];
     }
