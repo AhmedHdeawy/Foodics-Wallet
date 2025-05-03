@@ -10,10 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class WebhookService implements WebhookServiceContract
 {
-
-    public function __construct(protected BankParserFactory $bankParserFactory)
-    {
-    }
+    public function __construct(protected BankParserFactory $bankParserFactory) {}
 
     public function handleReceivedWebhook(array $data): Webhook
     {
@@ -28,6 +25,7 @@ class WebhookService implements WebhookServiceContract
     {
         if ($webhook->doNotProcess()) {
             Log::info("Skipping webhook {$webhook->id} as it's already {$webhook->status->value}");
+
             return;
         }
 

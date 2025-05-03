@@ -9,16 +9,12 @@ class BankParserFactory
 {
     /**
      * Get a parser for the specified bank
-     *
-     * @param  Bank  $bank
-     * @return BankParserContract
      */
     public function getParser(Bank $bank): BankParserContract
     {
         return match ($bank) {
-            Bank::ACME => new AcmeBankParser(),
-            Bank::FOODICS => new FoodicsBankParser()
+            Bank::ACME => new AcmeBankParser,
+            Bank::FOODICS => new FoodicsBankParser
         };
     }
-
 }
