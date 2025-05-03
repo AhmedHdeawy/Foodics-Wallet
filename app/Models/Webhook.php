@@ -4,11 +4,24 @@ namespace App\Models;
 
 use App\Enums\Bank;
 use App\Enums\WebhookStatus;
+use Carbon\Carbon;
 use Database\Factories\WebhookFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property string $raw_data
+ * @property Bank $bank_name
+ * @property WebhookStatus $status
+ * @property string $error_message
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @method static \Database\Factories\WebhookFactory factory($count = null, $state = [])
+ *
+ */
 class Webhook extends Model
 {
     /** @use HasFactory<WebhookFactory> */
