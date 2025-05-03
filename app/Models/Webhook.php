@@ -6,6 +6,8 @@ use App\Enums\Bank;
 use App\Enums\WebhookStatus;
 use Carbon\Carbon;
 use Database\Factories\WebhookFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $updated_at
  *
  * @method static WebhookFactory factory($count = null, $state = [])
+ * @method static Builder pending()
  */
 class Webhook extends Model
 {
@@ -81,5 +84,11 @@ class Webhook extends Model
             WebhookStatus::PROCESSED,
             WebhookStatus::PROCESSING,
         ]);
+    }
+
+    #[Scope]
+    protected function pending(Builder $query): Builder
+    {
+        return $query->where('status', WebhookStatus::PENDING);
     }
 }

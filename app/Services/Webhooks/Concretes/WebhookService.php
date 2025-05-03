@@ -8,6 +8,7 @@ use App\Services\BankParsers\Concretes\BankParserFactory;
 use App\Services\Transactions\Contracts\TransactionServiceContract;
 use App\Services\Webhooks\Contracts\WebhookServiceContract;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class WebhookService implements WebhookServiceContract
@@ -15,7 +16,8 @@ class WebhookService implements WebhookServiceContract
     public function __construct(
         protected BankParserFactory $bankParserFactory,
         protected TransactionServiceContract $transactionService
-    ) {}
+    ) {
+    }
 
     public function handleReceivedWebhook(array $data): Webhook
     {
@@ -51,5 +53,28 @@ class WebhookService implements WebhookServiceContract
             ]);
             throw $e;
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function processPendingWebhooks(int $limit): void
+    {
+        $webhooks = $this->getPendingWebhooks($limit);
+
+        foreach ($webhooks as $webhook) {
+            /** @var Webhook $webhook */
+            ProcessWebhook::dispatch($webhook);
+        }
+    }
+
+    /**
+     * Get pending webhooks
+     */
+    public function getPendingWebhooks(int $limit = 1000): Collection
+    {
+        return Webhook::pending()
+            ->limit($limit)
+            ->get();
     }
 }

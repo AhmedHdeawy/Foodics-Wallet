@@ -9,4 +9,6 @@ interface WebhookServiceContract
     public function handleReceivedWebhook(array $data): Webhook;
 
     public function processWebhook(Webhook $webhook): void;
+
+    public function processPendingWebhooks(int $limit): void;
 }
