@@ -5,22 +5,23 @@ namespace App\Services\BankParsers\Concretes;
 use App\DTOs\TransactionData;
 use App\Enums\Bank;
 use App\Services\BankParsers\Contracts\BankParserContract;
+use App\Services\BankParsers\Contracts\MapLineToTransactionContract;
 use Carbon\Carbon;
 use Exception;
 use InvalidArgumentException;
 
-class FoodicsBankParser implements BankParserContract
+class FoodicsBankParser implements BankParserContract, MapLineToTransactionContract
 {
     /**
      * Format: Date, Amount (two decimals), "#", Reference, "#", Key-value pairs
      * Example: 20250615156,50#202506159000001#note/debt payment march/internal_reference/A462JE81
      *
      * @param  string  $webhookData  Raw webhook data
-     * @return TransactionData[] Array of parsed transactions
+     * @return array of parsed transactions
      */
     public function parseTransactions(string $webhookData): array
     {
-        $result = [];
+        $transactions = [];
         $lines = explode("\n", trim($webhookData));
 
         foreach ($lines as $line) {
@@ -29,18 +30,7 @@ class FoodicsBankParser implements BankParserContract
             }
 
             try {
-                // Split by # separator
-                $parts = explode('#', $line);
-                if (count($parts) < 2) {
-                    continue; // Invalid format, (Assumed the metadata part(3) is optional)
-                }
-
-                $date = $this->parseDate($parts[0]);
-                $amount = $this->prepareAmount($parts[0]);
-                $reference = $parts[1];
-                $meta = $this->parseMetaData($parts);
-
-                $result[] = new TransactionData($reference, $amount, $date, $meta, $this->getBankName());
+                $transactions[] = $this->mapLineToTransaction($line)->toArray();
             } catch (Exception $e) {
                 // Later, we can store incorrect transactions in a database for further analysis.
                 logger()->error("Error parsing Foodics transaction: {$e->getMessage()}",
@@ -53,7 +43,23 @@ class FoodicsBankParser implements BankParserContract
             }
         }
 
-        return $result;
+        return $transactions;
+    }
+
+    public function mapLineToTransaction(string $line): TransactionData
+    {
+        // Split by # separator
+        $parts = explode('#', $line);
+        if (count($parts) < 2) {
+            throw new InvalidArgumentException('Invalid transaction format: '.$line);
+        }
+
+        $date = $this->parseDate($parts[0]);
+        $amount = $this->prepareAmount($parts[0]);
+        $reference = $parts[1];
+        $meta = $this->parseMetaData($parts);
+
+        return new TransactionData($reference, $amount, $date, $meta, $this->getBankName());
     }
 
     public function getBankName(): string
