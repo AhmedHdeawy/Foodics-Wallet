@@ -10,10 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class WebhookController extends Controller
 {
-
-    public function __construct(protected WebhookServiceContract $webhookService)
-    {
-    }
+    public function __construct(protected WebhookServiceContract $webhookService) {}
 
     public function handle(WebhookRequest $request, Bank $bank): JsonResponse
     {
@@ -21,8 +18,7 @@ class WebhookController extends Controller
 
         return response()->json([
             'webhook_id' => $webhook->id,
-            'message' => 'Webhook received successfully'
+            'message' => 'Webhook received successfully',
         ]);
     }
-
 }

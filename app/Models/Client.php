@@ -11,6 +11,7 @@ class Client extends Model
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     /**

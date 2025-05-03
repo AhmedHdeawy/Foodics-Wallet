@@ -16,12 +16,11 @@ class ProcessWebhook implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(protected Webhook $webhook)
-    {
-    }
+    public function __construct(protected Webhook $webhook) {}
 
     /**
      * Execute the job.
+     *
      * @throws Throwable
      */
     public function handle(WebhookServiceContract $webhookService): void
@@ -42,8 +41,7 @@ class ProcessWebhook implements ShouldQueue
 
         Log::error("Failed to process webhook {$this->webhook->id}", [
             'exception' => $exception->getMessage(),
-            'error' => $exception->getTraceAsString()
+            'error' => $exception->getTraceAsString(),
         ]);
     }
-
 }

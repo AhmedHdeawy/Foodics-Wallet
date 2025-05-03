@@ -19,13 +19,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static \Database\Factories\WebhookFactory factory($count = null, $state = [])
- *
+ * @method static WebhookFactory factory($count = null, $state = [])
  */
 class Webhook extends Model
 {
     /** @use HasFactory<WebhookFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     /**
@@ -49,29 +49,37 @@ class Webhook extends Model
     {
         return [
             'bank_name' => Bank::class,
-            'status' => WebhookStatus::class
+            'status' => WebhookStatus::class,
         ];
     }
 
     public function markAsProcessing(): bool
     {
         return $this->update([
-            'status' => WebhookStatus::PROCESSING
+            'status' => WebhookStatus::PROCESSING,
         ]);
     }
 
     public function markAsProcessed(): bool
     {
         return $this->update([
-            'status' => WebhookStatus::PROCESSED
+            'status' => WebhookStatus::PROCESSED,
         ]);
     }
 
-    public function markAsFailed(string $errorMessage = null): bool
+    public function markAsFailed(?string $errorMessage = null): bool
     {
         return $this->update([
             'status' => WebhookStatus::FAILED,
             'error_message' => $errorMessage,
+        ]);
+    }
+
+    public function doNotProcess(): bool
+    {
+        return in_array($this->status, [
+            WebhookStatus::PROCESSED,
+            WebhookStatus::PROCESSING,
         ]);
     }
 }
