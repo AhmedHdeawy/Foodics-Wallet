@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'ingestion_paused' => env('INGESTION_PAUSED', false),
+
 ];

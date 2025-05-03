@@ -4,6 +4,6 @@ use App\Http\Controllers\Webhook\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Webhook routes
-Route::post('/webhooks/{bank}', [WebhookController::class, 'receive'])
+Route::post('/webhooks/{bank}', [WebhookController::class, 'handle'])
     ->middleware('throttle:webhook')
-    ->name('webhooks.receive');
+    ->name('webhooks.handle');

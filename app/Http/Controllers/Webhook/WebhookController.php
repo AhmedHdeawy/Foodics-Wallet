@@ -15,9 +15,9 @@ class WebhookController extends Controller
     {
     }
 
-    public function receive(WebhookRequest $request, Bank $bank): JsonResponse
+    public function handle(WebhookRequest $request, Bank $bank): JsonResponse
     {
-        $webhook = $this->webhookService->store($request->validated());
+        $webhook = $this->webhookService->handleReceivedWebhook($request->validated());
 
         return response()->json([
             'webhook_id' => $webhook->id,

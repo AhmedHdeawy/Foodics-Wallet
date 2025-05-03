@@ -6,6 +6,7 @@ use App\Models\Webhook;
 
 interface WebhookServiceContract
 {
-    public function store(array $data): Webhook;
+    public function handleReceivedWebhook(array $data): Webhook;
+    public function processWebhook(Webhook $webhook): void;
 
 }
