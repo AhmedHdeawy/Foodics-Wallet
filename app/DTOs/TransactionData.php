@@ -38,8 +38,8 @@ readonly class TransactionData
             'meta' => is_array($this->meta) ? json_encode($this->meta) : $this->meta,
             'client_id' => $this->clientId,
             'status' => TransactionStatus::COMPLETED->value,
-            'created_at' => now()->format('Y-m-d'),
-            'updated_at' => now()->format('Y-m-d'),
+            'created_at' => now()->toDateTimeString(),
+            'updated_at' => now()->toDateTimeString(),
             'unique_identifier' => $this->generateUniqueIdentifier(),
         ];
     }
