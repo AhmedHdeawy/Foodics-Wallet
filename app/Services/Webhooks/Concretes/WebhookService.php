@@ -16,7 +16,7 @@ class WebhookService implements WebhookServiceContract
     {
         $webhook = Webhook::query()->create($data);
 
-        ProcessWebhook::dispatch($webhook);
+        ProcessWebhook::dispatchSync($webhook);
 
         return $webhook;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services\BankParsers\Concretes;
 
+use App\Enums\Bank;
 use App\Services\BankParsers\Contracts\BankParserContract;
 
 class AcmeBankParser implements BankParserContract
@@ -16,5 +17,10 @@ class AcmeBankParser implements BankParserContract
     public function parseTransactions(string $webhookData): array
     {
         // TODO: Implement parseTransactions() method.
+    }
+
+    public function getBankName(): string
+    {
+        return Bank::ACME->value;
     }
 }

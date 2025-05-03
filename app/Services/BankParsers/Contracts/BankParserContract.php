@@ -11,4 +11,11 @@ interface BankParserContract
      * @return array Array of parsed transactions
      */
     public function parseTransactions(string $webhookData): array;
+
+    /**
+     * Get the bank name handled by this parser
+     *
+     * @return string
+     */
+    public function getBankName(): string;
 }
