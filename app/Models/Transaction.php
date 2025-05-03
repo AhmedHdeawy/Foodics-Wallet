@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $client_id
  * @property string $reference
+ * @property string $unique_identifier
  * @property float $amount
  * @property Carbon $transaction_date
  * @property array $meta
@@ -44,6 +45,7 @@ class Transaction extends Model
         'bank_name',
         'meta',
         'status',
+        'unique_identifier'
     ];
 
     /**

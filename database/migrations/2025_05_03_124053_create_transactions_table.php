@@ -6,8 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -26,17 +25,21 @@ return new class extends Migration
              * Another option to ensure uniqueness could be to create a unique identifier
              * for each transaction, but this would require additional logic to generate
              * and store the unique identifier.
-             * see \App\Models\Transaction::generateUniqueIdentifier()
+             * see \App\DTOs\TransactionData::generateUniqueIdentifier()
              */
-            // $table->string('unique_identifier')->unique();
-
+            $table->string('unique_identifier')->unique();
 
             $table->enum('status', TransactionStatus::values())->default(TransactionStatus::PENDING);
             $table->timestamps();
             $table->softDeletes();
 
             // Create a unique index to prevent duplicate transactions
-            $table->unique(['client_id', 'reference', 'transaction_date', 'bank_name']);
+            $table->unique(
+                ['client_id', 'reference', 'transaction_date', 'bank_name', 'amount'],
+                'unique_transaction_index'
+            );
+            // Add index for the amount column to use it when calculating the client's balance
+            $table->index('amount', 'amount_index');
         });
     }
 

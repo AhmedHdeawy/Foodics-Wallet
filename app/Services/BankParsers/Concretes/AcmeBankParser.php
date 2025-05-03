@@ -30,7 +30,7 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
             }
 
             try {
-                $transactions[] = $this->mapLineToTransaction($line)->toArray();
+                $transactions[] = $this->mapLineToTransaction($line)->toBatchInsertRows();
             } catch (Exception $e) {
                 // Later, we can store incorrect transactions in a database for further analysis.
                 logger()->error("Error parsing {$this->getBankName()} transaction: {$e->getMessage()}",
