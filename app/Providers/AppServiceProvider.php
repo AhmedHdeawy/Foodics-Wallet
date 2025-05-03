@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register the webhook rate limiter
+        $this->webhookRateLimiter();
+    }
+
+    public function webhookRateLimiter(): void
+    {
+        RateLimiter::for('webhook', function (Request $request) {
+            return Limit::perMinute(6)->by($request->route('bank'));
+        });
     }
 }
