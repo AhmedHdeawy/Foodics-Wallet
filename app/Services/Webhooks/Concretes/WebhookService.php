@@ -15,8 +15,7 @@ class WebhookService implements WebhookServiceContract
     public function __construct(
         protected BankParserFactory $bankParserFactory,
         protected TransactionServiceContract $transactionService
-    ) {
-    }
+    ) {}
 
     public function handleReceivedWebhook(array $data): Webhook
     {

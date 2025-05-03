@@ -67,18 +67,4 @@ class Transaction extends Model
     {
         return $this->belongsTo(Client::class);
     }
-
-    /**
-     * Generate a unique identifier for this transaction
-     * This helps prevent duplicate transactions
-     * Combines bank name, reference and transaction date
-     */
-    public static function generateUniqueIdentifier(
-        string $clientId,
-        string $bankName,
-        string $reference,
-        string $date
-    ): string {
-        return md5($clientId.$bankName.$reference.$date);
-    }
 }
