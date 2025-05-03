@@ -2,6 +2,7 @@
 
 namespace App\Services\BankParsers\Concretes;
 
+use App\DTOs\TransactionData;
 use App\Enums\Bank;
 use App\Services\BankParsers\Contracts\BankParserContract;
 
@@ -12,11 +13,12 @@ class AcmeBankParser implements BankParserContract
      * Example: 156,50//202506159000001//20250615
      *
      * @param  string  $webhookData  Raw webhook data
-     * @return array Array of parsed transactions
+     * @return TransactionData[] Array of parsed transactions
      */
     public function parseTransactions(string $webhookData): array
     {
         // TODO: Implement parseTransactions() method.
+        return [];
     }
 
     public function getBankName(): string

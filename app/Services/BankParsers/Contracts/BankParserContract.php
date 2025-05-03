@@ -14,8 +14,6 @@ interface BankParserContract
 
     /**
      * Get the bank name handled by this parser
-     *
-     * @return string
      */
     public function getBankName(): string;
 }

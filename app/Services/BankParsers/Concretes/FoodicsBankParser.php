@@ -46,8 +46,9 @@ class FoodicsBankParser implements BankParserContract
                 logger()->error("Error parsing Foodics transaction: {$e->getMessage()}",
                     [
                         'transaction' => $line,
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
                     ]);
+
                 continue;
             }
         }
@@ -68,6 +69,7 @@ class FoodicsBankParser implements BankParserContract
 
         try {
             $date = substr($value, 0, 8);
+
             return Carbon::parse($date);
         } catch (Exception) {
             throw new InvalidArgumentException("Cannot parse date: $value");
@@ -104,6 +106,7 @@ class FoodicsBankParser implements BankParserContract
         } catch (Exception $e) {
             logger()->error("Error parsing Foodics meta data: {$e->getMessage()}");
         }
+
         return $meta;
     }
 }

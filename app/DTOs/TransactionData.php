@@ -13,8 +13,7 @@ readonly class TransactionData
         private array $meta,
         private string $bank,
         private int $clientId = 1
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
@@ -24,7 +23,7 @@ readonly class TransactionData
             'date' => $this->date,
             'meta' => $this->meta,
             'bank' => $this->bank,
-            'client_id' => $this->clientId
+            'client_id' => $this->clientId,
         ];
     }
 }
