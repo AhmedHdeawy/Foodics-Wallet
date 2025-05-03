@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function webhookRateLimiter(): void
     {
         RateLimiter::for('webhook', function (Request $request) {
-            return Limit::perMinute(6)->by($request->route('bank'));
+            return Limit::perMinute(500)->by($request->route('bank'));
         });
     }
 }
