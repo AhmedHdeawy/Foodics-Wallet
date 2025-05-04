@@ -6,12 +6,15 @@ use App\DTOs\TransactionData;
 use App\Enums\Bank;
 use App\Services\BankParsers\Contracts\BankParserContract;
 use App\Services\BankParsers\Contracts\MapLineToTransactionContract;
+use App\Traits\ParserChecks;
 use Carbon\Carbon;
 use Exception;
 use InvalidArgumentException;
 
 class FoodicsBankParser implements BankParserContract, MapLineToTransactionContract
 {
+    use ParserChecks;
+
     /**
      * Format: Date, Amount (two decimals), "#", Reference, "#", Key-value pairs
      * Example: 20250615156,50#202506159000001#note/debt payment march/internal_reference/A462JE81
@@ -69,16 +72,12 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
 
     private function parseDate(string $value): Carbon
     {
-        if (strlen($value) < 8) {
-            throw new InvalidArgumentException('Date format is invalid: '.$value);
-        }
+        $this->checkDateValueLength($value);
 
         try {
             $date = Carbon::parse(substr($value, 0, 8));
 
-            if ($date->greaterThan(Carbon::today())) {
-                throw new InvalidArgumentException('Date cannot be in the future: '.$date);
-            }
+            $this->checkIfDateInTheFuture($date);
 
             return $date;
         } catch (Exception) {
@@ -90,9 +89,7 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
     {
         $amount = substr($value, 8);
         $amount = (float) str_replace(',', '.', $amount);
-        if ($amount < 0) {
-            throw new InvalidArgumentException('Amount cannot be negative: '.$amount);
-        }
+        $this->checkIfAmountLessThanZero($amount);
 
         return $amount;
     }

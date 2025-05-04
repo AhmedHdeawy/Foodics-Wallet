@@ -6,12 +6,15 @@ use App\DTOs\TransactionData;
 use App\Enums\Bank;
 use App\Services\BankParsers\Contracts\BankParserContract;
 use App\Services\BankParsers\Contracts\MapLineToTransactionContract;
+use App\Traits\ParserChecks;
 use Carbon\Carbon;
 use Exception;
 use InvalidArgumentException;
 
 class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
 {
+    use ParserChecks;
+
     /**
      * Format: Amount (two decimals), "//", Reference, "//", Date
      * Example: 156,50//202506159000001//20250615
@@ -68,15 +71,11 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
 
     private function parseDate(string $value): Carbon
     {
-        if (strlen($value) < 8) {
-            throw new InvalidArgumentException('Date format is invalid: '.$value);
-        }
+        $this->checkDateValueLength($value);
 
         $date = Carbon::parse($value);
 
-        if ($date->greaterThan(Carbon::today())) {
-            throw new InvalidArgumentException('Date cannot be in the future: '.$date);
-        }
+        $this->checkIfDateInTheFuture($date);
 
         return $date;
     }
@@ -86,9 +85,7 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
         // Extract amount (replacing comma with dot for decimal)
         $amountStr = $value;
         $amount = (float) str_replace(',', '.', $amountStr);
-        if ($amount < 0) {
-            throw new InvalidArgumentException('Amount cannot be negative: '.$amount);
-        }
+        $this->checkIfAmountLessThanZero($amount);
 
         return $amount;
     }
