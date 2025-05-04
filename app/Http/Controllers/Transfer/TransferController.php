@@ -9,9 +9,7 @@ use Illuminate\Http\Response;
 
 class TransferController extends Controller
 {
-    public function __construct(protected TransferServiceContract $transferService)
-    {
-    }
+    public function __construct(protected TransferServiceContract $transferService) {}
 
     public function transfer(TransferRequest $request): Response
     {

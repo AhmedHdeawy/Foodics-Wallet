@@ -3,8 +3,8 @@
 namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Response as HttpResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 trait ApiResponse
 {

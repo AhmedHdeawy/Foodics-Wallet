@@ -2,7 +2,6 @@
 
 namespace App\Services\TransferXmlBuilder\Contracts;
 
-
 use Carbon\Carbon;
 
 interface TransferXmlBuilderContract

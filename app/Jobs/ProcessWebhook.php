@@ -15,9 +15,7 @@ class ProcessWebhook implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public int $webhookId)
-    {
-    }
+    public function __construct(public int $webhookId) {}
 
     /**
      * Execute the job.

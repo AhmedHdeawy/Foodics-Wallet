@@ -38,11 +38,11 @@ class WebhookRequest extends FormRequest
             }
 
             // Ensure the client id is present in the header X-Client-Id
-            if (!$this->hasHeader('X-Client-Id')) {
+            if (! $this->hasHeader('X-Client-Id')) {
                 $validator->errors()->add('client_id', 'The Client Id header is required.');
             } else {
                 $clientId = $this->header('X-Client-Id');
-                if (!is_numeric($clientId)) {
+                if (! is_numeric($clientId)) {
                     $validator->errors()->add('client_id', 'The Client Id header must be a numeric value.');
                 }
             }

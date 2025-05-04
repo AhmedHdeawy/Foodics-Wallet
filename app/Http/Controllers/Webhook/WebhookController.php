@@ -11,9 +11,7 @@ use Illuminate\Http\Request;
 
 class WebhookController extends Controller
 {
-    public function __construct(protected WebhookServiceContract $webhookService)
-    {
-    }
+    public function __construct(protected WebhookServiceContract $webhookService) {}
 
     public function handle(WebhookRequest $request, Bank $bank): JsonResponse
     {
@@ -28,7 +26,7 @@ class WebhookController extends Controller
     public function status(Request $request, int $id): JsonResponse
     {
         return $this->successResponse([
-            'status' => $this->webhookService->getWebhookStatus($id)
+            'status' => $this->webhookService->getWebhookStatus($id),
         ]);
     }
 }

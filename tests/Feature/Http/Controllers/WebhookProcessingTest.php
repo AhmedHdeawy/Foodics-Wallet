@@ -5,7 +5,6 @@ use App\Jobs\ProcessWebhook;
 use App\Models\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
-
 use Illuminate\Testing\TestResponse;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -17,8 +16,8 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     Queue::fake();
     $this->client = Client::factory()->create();
-    $this->validFoodicsSingleTransaction = "20250615156,50#202506159000001#note/debt payment";
-    $this->validAcmeSingleTransaction = "156,50//202504159000001//20250415";
+    $this->validFoodicsSingleTransaction = '20250615156,50#202506159000001#note/debt payment';
+    $this->validAcmeSingleTransaction = '156,50//202504159000001//20250415';
 });
 
 function webhookRequest(?string $payload, ?int $clientId = null, string $bank = Bank::FOODICS->value): TestResponse
@@ -46,8 +45,8 @@ it('successfully receives webhook from foodics bank', function () {
         ->assertJsonStructure([
             'data' => [
                 'webhook_id',
-                'message'
-            ]
+                'message',
+            ],
         ]);
 
     // Check that the webhook was stored
@@ -71,8 +70,8 @@ it('successfully receives webhook from acme bank', function () {
         ->assertJsonStructure([
             'data' => [
                 'webhook_id',
-                'message'
-            ]
+                'message',
+            ],
         ]);
 
     // Check that the webhook was stored
@@ -91,7 +90,7 @@ it('fails with invalid bank', function () {
     $response = webhookRequest($this->validFoodicsSingleTransaction, $this->client->id, 'zero_bank');
 
     $response->assertStatus(404)->assertJson([
-        'message' => "Case [zero_bank] not found on Backed Enum [App\\Enums\\Bank]."
+        'message' => 'Case [zero_bank] not found on Backed Enum [App\\Enums\\Bank].',
     ]);
 
     assertDatabaseCount('webhooks', 0);
@@ -120,7 +119,7 @@ it('fails with empty content', function () {
 
 it('handles multiple foodics transaction in one webhook', function () {
     $multiLineWebhookData = "20250615156,50#202506159000001#note/payment1\n".
-        "20250616200,00#202506169000002#note/payment2";
+        '20250616200,00#202506169000002#note/payment2';
 
     $response = webhookRequest($multiLineWebhookData, $this->client->id);
 
@@ -142,7 +141,7 @@ it('handles multiple foodics transaction in one webhook', function () {
 
 it('handles multiple acme transaction in one webhook', function () {
     $multiLineWebhookData = "156,50//202504159000001//20250415\n".
-        "7623,88//2024110556873465//20241105";
+        '7623,88//2024110556873465//20241105';
 
     $response = webhookRequest($multiLineWebhookData, $this->client->id, Bank::ACME->value);
 

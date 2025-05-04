@@ -13,6 +13,7 @@ trait ParserChecks
             throw new InvalidArgumentException('Invalid transaction format: '.$line);
         }
     }
+
     public function checkLineHasTwoSlashesCharacter(string $line): void
     {
         if (substr_count($line, '//') < 2) {
@@ -29,7 +30,7 @@ trait ParserChecks
 
     public function checkDateAmountPart(string $part): void
     {
-        if (strlen($part) < 9 || !str_contains($part, ',')) {
+        if (strlen($part) < 9 || ! str_contains($part, ',')) {
             throw new InvalidArgumentException('Date and amount part is invalid: '.$part);
         }
     }

@@ -11,17 +11,15 @@ use Random\RandomException;
 class TransferService implements TransferServiceContract
 {
     private const array NOT_ALLOWED_PAYMENT_TYPES = ['99'];
+
     private const array NOT_ALLOWED_CHARGE_DETAILS = ['SHA'];
 
     public function __construct(
         protected TransferXmlBuilderContract $xmlBuilder,
         protected ClientServiceContract $clientService
-    ) {
-    }
+    ) {}
 
     /**
-     * @param  array  $data
-     * @return string
      * @throws RandomException
      */
     public function transferMoney(array $data): string
@@ -56,17 +54,17 @@ class TransferService implements TransferServiceContract
          * The task mentioned that The Notes tag must not be present if there are notes.
          * But I guess you means that if there are no notes, the tag should not be present.
          */
-        if (!empty($data['notes'])) {
+        if (! empty($data['notes'])) {
             foreach ($data['notes'] as $note) {
                 $xmlBuilder->addNote($note);
             }
         }
 
-        if (isset($data['payment_type']) && !in_array($data['payment_type'], self::NOT_ALLOWED_PAYMENT_TYPES)) {
+        if (isset($data['payment_type']) && ! in_array($data['payment_type'], self::NOT_ALLOWED_PAYMENT_TYPES)) {
             $xmlBuilder->setPaymentType($data['payment_type']);
         }
 
-        if (isset($data['charge_details']) && !in_array($data['charge_details'], self::NOT_ALLOWED_CHARGE_DETAILS)) {
+        if (isset($data['charge_details']) && ! in_array($data['charge_details'], self::NOT_ALLOWED_CHARGE_DETAILS)) {
             $xmlBuilder->setChargeDetails($data['charge_details']);
         }
 

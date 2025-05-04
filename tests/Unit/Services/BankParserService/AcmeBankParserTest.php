@@ -6,10 +6,10 @@ use App\Services\BankParsers\Concretes\AcmeBankParser;
 use Carbon\Carbon;
 
 beforeEach(function () {
-    $this->parser = new AcmeBankParser();
-    $this->validSingleTransaction = "156,50//202504159000001//20250415";
+    $this->parser = new AcmeBankParser;
+    $this->validSingleTransaction = '156,50//202504159000001//20250415';
     $this->validMultipleTransactions = "156,50//202504159000001//20250415\n".
-        "7623,88//2024110556873465//20241105";
+        '7623,88//2024110556873465//20241105';
 });
 
 it('parses valid webhook with one transaction', function () {
@@ -42,13 +42,13 @@ it('parses valid webhook with multiple transaction', function () {
         [
             'amount' => 156.50,
             'reference' => '202504159000001',
-            'transaction_date' => '2025-04-15'
+            'transaction_date' => '2025-04-15',
         ],
         [
             'amount' => 7623.88,
             'reference' => '2024110556873465',
-            'transaction_date' => '2024-11-05'
-        ]
+            'transaction_date' => '2024-11-05',
+        ],
     ];
 
     foreach ($transactions as $index => $transaction) {
@@ -64,7 +64,7 @@ it('skips invalid lines when parsing transactions', function () {
     $webhookData = $this->validSingleTransaction."\n".
         "invalid transaction\n".
         "6,34//20230412576342//20230412\n".
-        "20251315156,50";
+        '20251315156,50';
 
     $transactions = $this->parser->parseTransactions($webhookData);
 
@@ -109,10 +109,10 @@ it('skips transactions with negative amount', function () {
 });
 
 it('handles empty webhook', function () {
-    $transactions = $this->parser->parseTransactions("");
+    $transactions = $this->parser->parseTransactions('');
     expect($transactions)->toBeArray()->toBeEmpty();
 
-    $transactions = $this->parser->parseTransactions("   ");
+    $transactions = $this->parser->parseTransactions('   ');
     expect($transactions)->toBeArray()->toBeEmpty();
 });
 
@@ -123,10 +123,10 @@ it('returns the correct bank name', function () {
 
 it('handles malformed input', function () {
     $malformedInputs = [
-        "156,50##202504159000001//20250415", // Wrong format
-        "156,50//202504159000001", // Incomplete
-        "//", // Just a delimiter
-        "156,50", // Missing required parts
+        '156,50##202504159000001//20250415', // Wrong format
+        '156,50//202504159000001', // Incomplete
+        '//', // Just a delimiter
+        '156,50', // Missing required parts
     ];
 
     foreach ($malformedInputs as $input) {

@@ -6,10 +6,10 @@ use App\Services\BankParsers\Concretes\FoodicsBankParser;
 use Carbon\Carbon;
 
 beforeEach(function () {
-    $this->parser = new FoodicsBankParser();
-    $this->validSingleTransaction = "20250415156,50#202504159000001#note/debt payment march/internal_reference/A462JE81";
+    $this->parser = new FoodicsBankParser;
+    $this->validSingleTransaction = '20250415156,50#202504159000001#note/debt payment march/internal_reference/A462JE81';
     $this->validMultipleTransactions = "20250415156,50#202504159000001#note/debt payment march/internal_reference/A462JE81\n"
-        ."20250416200,00#202504169000002#note/salary payment";
+        .'20250416200,00#202504169000002#note/salary payment';
 });
 
 it('parses valid webhook with one transaction', function () {
@@ -53,15 +53,15 @@ it('parses valid webhook with multiple transaction', function () {
             'reference' => '202504159000001',
             'transaction_date' => '2025-04-15',
             'meta_keys' => ['note', 'internal_reference'],
-            'meta_values' => ['debt payment march', 'A462JE81']
+            'meta_values' => ['debt payment march', 'A462JE81'],
         ],
         [
             'amount' => 200.00,
             'reference' => '202504169000002',
             'transaction_date' => '2025-04-16',
             'meta_keys' => ['note'],
-            'meta_values' => ['salary payment']
-        ]
+            'meta_values' => ['salary payment'],
+        ],
     ];
 
     foreach ($transactions as $index => $transaction) {
@@ -85,7 +85,7 @@ it('skips invalid lines when parsing transactions', function () {
     $webhookData = $this->validSingleTransaction."\n".
         "invalid transaction\n".
         "20250416200,00#202504169000002#note/salary payment\n".
-        "20251315156,50";
+        '20251315156,50';
 
     $transactions = $this->parser->parseTransactions($webhookData);
 
@@ -119,10 +119,10 @@ it('skips transactions with negative amount', function () {
 });
 
 it('handles empty webhook', function () {
-    $transactions = $this->parser->parseTransactions("");
+    $transactions = $this->parser->parseTransactions('');
     expect($transactions)->toBeArray()->toBeEmpty();
 
-    $transactions = $this->parser->parseTransactions("   ");
+    $transactions = $this->parser->parseTransactions('   ');
     expect($transactions)->toBeArray()->toBeEmpty();
 });
 
@@ -133,10 +133,10 @@ it('returns the correct bank name', function () {
 
 it('handles malformed input', function () {
     $malformedInputs = [
-        "20250145#100,00#202504159000001#note/test", // Wrong format
-        "202504151#00,00#", // Incomplete
-        "#", // Just a delimiter
-        "20250415100,00", // Missing required parts
+        '20250145#100,00#202504159000001#note/test', // Wrong format
+        '202504151#00,00#', // Incomplete
+        '#', // Just a delimiter
+        '20250415100,00', // Missing required parts
     ];
 
     foreach ($malformedInputs as $input) {

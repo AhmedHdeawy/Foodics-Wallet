@@ -19,8 +19,7 @@ class WebhookService implements WebhookServiceContract
         protected BankParserFactory $bankParserFactory,
         protected TransactionServiceContract $transactionService,
         protected ClientServiceContract $clientService
-    ) {
-    }
+    ) {}
 
     public function handleReceivedWebhook(array $data): int
     {
@@ -103,5 +102,4 @@ class WebhookService implements WebhookServiceContract
 
         return $webhook->status->value;
     }
-
 }
