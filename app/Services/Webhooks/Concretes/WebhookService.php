@@ -3,9 +3,9 @@
 namespace App\Services\Webhooks\Concretes;
 
 use App\Jobs\ProcessWebhook;
-use App\Models\Client;
 use App\Models\Webhook;
 use App\Services\BankParsers\Concretes\BankParserFactory;
+use App\Services\Clients\Contracts\ClientServiceContract;
 use App\Services\Transactions\Contracts\TransactionServiceContract;
 use App\Services\Webhooks\Contracts\WebhookServiceContract;
 use Exception;
@@ -17,13 +17,14 @@ class WebhookService implements WebhookServiceContract
 {
     public function __construct(
         protected BankParserFactory $bankParserFactory,
-        protected TransactionServiceContract $transactionService
+        protected TransactionServiceContract $transactionService,
+        protected ClientServiceContract $clientService
     ) {
     }
 
     public function handleReceivedWebhook(array $data): int
     {
-        $this->validateClient($data['client_id']);
+        $this->clientService->validateClient($data['client_id']);
 
         $webhookId = DB::table('webhooks')->insertGetId($this->prepareWebhookData($data));
 
@@ -83,14 +84,6 @@ class WebhookService implements WebhookServiceContract
         return Webhook::pending()
             ->limit($limit)
             ->get(['id']);
-    }
-
-    private function validateClient(mixed $client_id): void
-    {
-        /**
-         * Alternatively, we could cache client data in Redis to verify client existence without querying the database.
-         */
-        Client::query()->select('id')->findOrFail($client_id);
     }
 
     private function prepareWebhookData(array $data): array

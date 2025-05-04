@@ -2,15 +2,26 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
+use Carbon\Carbon;
+use Database\Factories\ClientFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
+/**
+ * @property int $id
+ * @property string $name
+ * @property float $balance
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @method static ClientFactory factory($count = null, $state = [])
+ */
 class Client extends Model
 {
-    /** @use HasFactory<UserFactory> */
+    /** @use HasFactory<ClientFactory> */
     use HasFactory;
 
     use SoftDeletes;
