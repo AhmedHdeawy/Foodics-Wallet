@@ -4,6 +4,10 @@ use App\Http\Controllers\Webhook\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Webhook routes
-Route::post('/webhooks/{bank}', [WebhookController::class, 'handle'])
+Route::prefix('webhooks')
+    ->name('webhooks.')
     ->middleware('throttle:webhook')
-    ->name('webhooks.handle');
+    ->group(function () {
+        Route::post('/{bank}', [WebhookController::class, 'handle'])->name('handle');
+        Route::get('/{id}/status', [WebhookController::class, 'status'])->name('status');
+    });

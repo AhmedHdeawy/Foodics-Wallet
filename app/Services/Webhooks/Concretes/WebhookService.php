@@ -103,4 +103,12 @@ class WebhookService implements WebhookServiceContract
             'updated_at' => now()->toDateTimeString(),
         ];
     }
+
+    public function getWebhookStatus(int $id): string
+    {
+        $webhook = Webhook::query()->findOrFail($id, ['status']);
+
+        return $webhook->status->value;
+    }
+
 }

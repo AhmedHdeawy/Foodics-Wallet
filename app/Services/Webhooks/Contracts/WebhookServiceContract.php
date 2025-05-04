@@ -11,4 +11,6 @@ interface WebhookServiceContract
     public function processWebhook(int $webhookId): void;
 
     public function processPendingWebhooks(int $limit): void;
+
+    public function getWebhookStatus(int $id): string;
 }

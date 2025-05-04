@@ -21,7 +21,6 @@ return new class extends Migration
             $table->enum('status', WebhookStatus::values())->default(WebhookStatus::PENDING);
             $table->text('error_message')->nullable();
             $table->timestamps();
-            $table->softDeletes();
 
             // Index for querying unprocessed webhooks efficiently
             $table->index(['status']);
