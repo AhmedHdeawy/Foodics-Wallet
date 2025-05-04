@@ -5,6 +5,7 @@ namespace App\Services\Transfers\Concretes;
 use App\Services\Clients\Contracts\ClientServiceContract;
 use App\Services\Transfers\Contracts\TransferServiceContract;
 use App\Services\TransferXmlBuilder\Contracts\TransferXmlBuilderContract;
+use App\Utils\Helper;
 use InvalidArgumentException;
 use Random\RandomException;
 
@@ -28,7 +29,7 @@ class TransferService implements TransferServiceContract
 
         // Check if client has sufficient balance
         if ($client->balance < $data['amount']) {
-            throw new InvalidArgumentException('Insufficient balance');
+            throw new InvalidArgumentException('Insufficient balance', 400);
         }
 
         return $this->generateXml($data);
@@ -45,7 +46,7 @@ class TransferService implements TransferServiceContract
             ->setAmount($data['amount'])
             ->setCurrency($data['currency'] ?? 'SAR')
             // Later we will get the account number from the client
-            ->setSenderAccountNumber((string) random_int(23432434, 54395385743853))
+            ->setSenderAccountNumber(Helper::generateSenderAccountNumber())
             ->setReceiverBankCode($data['receiver_bank_code'])
             ->setReceiverAccountNumber($data['receiver_account_number'])
             ->setBeneficiaryName($data['beneficiary_name']);
