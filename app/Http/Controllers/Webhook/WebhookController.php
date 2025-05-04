@@ -19,7 +19,7 @@ class WebhookController extends Controller
     {
         $webhookId = $this->webhookService->handleReceivedWebhook($request->validated());
 
-        return response()->json([
+        return $this->successResponse([
             'webhook_id' => $webhookId,
             'message' => 'Webhook received successfully',
         ]);
@@ -27,7 +27,7 @@ class WebhookController extends Controller
 
     public function status(Request $request, int $id): JsonResponse
     {
-        return response()->json([
+        return $this->successResponse([
             'status' => $this->webhookService->getWebhookStatus($id)
         ]);
     }
