@@ -51,7 +51,10 @@ class AppServiceProvider extends ServiceProvider
     public function webhookRateLimiter(): void
     {
         RateLimiter::for('webhook', function (Request $request) {
-            return Limit::perMinute(500)->by($request->route('bank'));
+            return Limit::perMinutes(
+                decayMinutes: config('app.webhook_rate_limit.time_window'),
+                maxAttempts: config('app.webhook_rate_limit.max_requests'),
+            )->by($request->route('bank'));
         });
     }
 
