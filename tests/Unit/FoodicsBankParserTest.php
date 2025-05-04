@@ -104,20 +104,37 @@ it('skips the invalid lines', function () {
         ->and($secondTransaction['meta'])->toContain('salary payment');
 });
 
-it('skips lines with dates in the future', function () {
+it('skips transactions with dates in the future', function () {
     $parser = new FoodicsBankParser();
+    $futureDate = now()->addDays(5)->format('Ymd');
 
-    $webhookData = "20250615156,50#202506159000001#note/debt payment march/internal_reference/A462JE81\n".
+    $webhookData = "{$futureDate}156,50#{$futureDate}9000001#note/debt payment march/internal_reference/A462JE81\n".
         "20250416200,00#202506169000002#note/salary payment\n";
 
     $transactions = $parser->parseTransactions($webhookData);
 
     expect($transactions)->toHaveCount(1);
 
-    $firstTransaction = $transactions[0];
-    expect($firstTransaction['amount'])->toBe(200.00)
-        ->and($firstTransaction['reference'])->toBe('202506169000002')
-        ->and($firstTransaction['transaction_date'])->toBe('2025-04-16');
+    $transaction = $transactions[0];
+    expect($transaction['amount'])->toBe(200.00)
+        ->and($transaction['reference'])->toBe('202506169000002')
+        ->and($transaction['transaction_date'])->toBe('2025-04-16');
+});
+
+it('skips transactions with negative amount', function () {
+    $parser = new FoodicsBankParser();
+
+    $webhookData = "20250415-156,50#202504159000001#note/debt payment march/internal_reference/A462JE81\n".
+        "20250416200,00#202506169000002#note/salary payment\n";
+
+    $transactions = $parser->parseTransactions($webhookData);
+
+    expect($transactions)->toHaveCount(1);
+
+    $transaction = $transactions[0];
+    expect($transaction['amount'])->toBe(200.00)
+        ->and($transaction['reference'])->toBe('202506169000002')
+        ->and($transaction['transaction_date'])->toBe('2025-04-16');
 });
 
 it('handles empty webhook', function () {

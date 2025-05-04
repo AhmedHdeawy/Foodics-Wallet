@@ -89,7 +89,7 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
     {
         $amount = substr($value, 8);
         $amount = (float) str_replace(',', '.', $amount);
-        $this->checkIfAmountLessThanZero($amount);
+        $this->checkNegativeAmount($amount);
 
         return $amount;
     }

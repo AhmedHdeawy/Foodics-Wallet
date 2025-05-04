@@ -85,7 +85,7 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
         // Extract amount (replacing comma with dot for decimal)
         $amountStr = $value;
         $amount = (float) str_replace(',', '.', $amountStr);
-        $this->checkIfAmountLessThanZero($amount);
+        $this->checkNegativeAmount($amount);
 
         return $amount;
     }

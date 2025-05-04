@@ -21,7 +21,7 @@ trait ParserChecks
         }
     }
 
-    public function checkIfAmountLessThanZero(float $amount): void
+    public function checkNegativeAmount(float $amount): void
     {
         if ($amount < 0) {
             throw new InvalidArgumentException('Amount cannot be negative: '.$amount);

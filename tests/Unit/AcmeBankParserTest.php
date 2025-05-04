@@ -77,6 +77,41 @@ it('skips the invalid lines', function () {
         ->and($secondTransaction['bank_name'])->toBe(Bank::ACME->value);
 });
 
+it('skips transactions with dates in the future', function () {
+    $parser = new AcmeBankParser();
+    $futureDate = now()->addDays(5)->format('Ymd');
+
+    $webhookData = "156,50//{$futureDate}9000001//{$futureDate}\n".
+        "6,34//20230412576342//20230412\n";
+
+    $transactions = $parser->parseTransactions($webhookData);
+
+    expect($transactions)->toHaveCount(1);
+
+    $transaction = $transactions[0];
+    expect($transaction['amount'])->toBe(6.34)
+        ->and($transaction['reference'])->toBe('20230412576342')
+        ->and($transaction['transaction_date'])->toBe('2023-04-12')
+        ->and($transaction['bank_name'])->toBe(Bank::ACME->value);
+});
+
+it('skips transactions with negative amount', function () {
+    $parser = new AcmeBankParser();
+
+    $webhookData = "-156,50//202504159000001//20250415\n".
+        "6,34//20230412576342//20230412\n";
+
+    $transactions = $parser->parseTransactions($webhookData);
+
+    expect($transactions)->toHaveCount(1);
+
+    $transaction = $transactions[0];
+    expect($transaction['amount'])->toBe(6.34)
+        ->and($transaction['reference'])->toBe('20230412576342')
+        ->and($transaction['transaction_date'])->toBe('2023-04-12')
+        ->and($transaction['bank_name'])->toBe(Bank::ACME->value);
+});
+
 it('handles empty webhook', function () {
     $parser = new AcmeBankParser();
     $webhookData = "";
