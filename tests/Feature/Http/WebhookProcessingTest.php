@@ -16,7 +16,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     Queue::fake();
     $this->client = Client::factory()->create();
-    $this->validFoodicsSingleTransaction = '20250615156,50#202506159000001#note/debt payment';
+    $this->validFoodicsSingleTransaction = '20250415156,50#202504159000001#note/debt payment march/internal_reference/A462JE81';
     $this->validAcmeSingleTransaction = '156,50//202504159000001//20250415';
 });
 
