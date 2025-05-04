@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
+ * @property int $client_id
  * @property string $raw_data
  * @property Bank $bank_name
  * @property WebhookStatus $status
@@ -37,6 +39,7 @@ class Webhook extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'client_id',
         'raw_data',
         'bank_name',
         'status',
@@ -54,6 +57,11 @@ class Webhook extends Model
             'bank_name' => Bank::class,
             'status' => WebhookStatus::class,
         ];
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
     }
 
     public function markAsProcessing(): bool

@@ -36,6 +36,16 @@ class WebhookRequest extends FormRequest
             if (empty($this->getContent())) {
                 $validator->errors()->add('content', 'The webhook content cannot be empty.');
             }
+
+            // Ensure the client id is present in the header X-Client-Id
+            if (!$this->hasHeader('X-Client-Id')) {
+                $validator->errors()->add('client_id', 'The Client Id header is required.');
+            } else {
+                $clientId = $this->header('X-Client-Id');
+                if (!is_numeric($clientId)) {
+                    $validator->errors()->add('client_id', 'The Client Id header must be a numeric value.');
+                }
+            }
         });
     }
 
@@ -44,6 +54,7 @@ class WebhookRequest extends FormRequest
         return array_merge(parent::validated(), [
             'raw_data' => $this->getContent(),
             'bank_name' => $this->route('bank'),
+            'client_id' => $this->header('X-Client-Id'),
         ]);
     }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('webhooks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->text('raw_data');
             $table->enum('bank_name', Bank::values());
             $table->enum('status', WebhookStatus::values())->default(WebhookStatus::PENDING);
@@ -23,7 +24,8 @@ return new class extends Migration
             $table->softDeletes();
 
             // Index for querying unprocessed webhooks efficiently
-            $table->index(['status', 'created_at']);
+            $table->index(['status']);
+            $table->index(['client_id']);
         });
     }
 

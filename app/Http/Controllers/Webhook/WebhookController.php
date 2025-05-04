@@ -14,10 +14,10 @@ class WebhookController extends Controller
 
     public function handle(WebhookRequest $request, Bank $bank): JsonResponse
     {
-        $webhook = $this->webhookService->handleReceivedWebhook($request->validated());
+        $webhookId = $this->webhookService->handleReceivedWebhook($request->validated());
 
         return response()->json([
-            'webhook_id' => $webhook->id,
+            'webhook_id' => $webhookId,
             'message' => 'Webhook received successfully',
         ]);
     }

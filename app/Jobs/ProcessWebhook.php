@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\Webhook;
 use App\Services\Webhooks\Contracts\WebhookServiceContract;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -16,7 +15,9 @@ class ProcessWebhook implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(protected Webhook $webhook) {}
+    public function __construct(protected int $webhookId)
+    {
+    }
 
     /**
      * Execute the job.
@@ -29,7 +30,7 @@ class ProcessWebhook implements ShouldQueue
             return;
         }
 
-        $webhookService->processWebhook($this->webhook);
+        $webhookService->processWebhook($this->webhookId);
     }
 
     /**
@@ -37,9 +38,7 @@ class ProcessWebhook implements ShouldQueue
      */
     public function failed(Throwable $exception): void
     {
-        $this->webhook->markAsFailed($exception->getMessage());
-
-        Log::error("Failed to process webhook {$this->webhook->id}", [
+        Log::error("Failed to process webhook $this->webhookId", [
             'exception' => $exception->getMessage(),
             'error' => $exception->getTraceAsString(),
         ]);
