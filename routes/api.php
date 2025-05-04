@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\Webhook\WebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,3 +12,7 @@ Route::prefix('webhooks')
         Route::post('/{bank}', [WebhookController::class, 'handle'])->name('handle');
         Route::get('/{id}/status', [WebhookController::class, 'status'])->name('status');
     });
+
+Route::post('transfer', [TransferController::class, 'transfer'])
+    ->name('transfer.handle')
+    ->middleware('throttle:transfer');
