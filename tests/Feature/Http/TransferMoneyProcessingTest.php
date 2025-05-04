@@ -13,19 +13,24 @@ beforeEach(function () {
     Carbon::setTestNow($this->testDateTime);
 });
 
-function transferRequest(int $clientId, string $paymentType = '5664', string $chargeDetails = 'RAS'): TestResponse
-{
+function transferRequest(
+    int $clientId,
+    float $amount = 50,
+    bool $setNotes = true,
+    string $paymentType = '5664',
+    string $chargeDetails = 'RAS'
+): TestResponse {
     return postJson(apiRoute('transfer'), [
         'client_id' => $clientId,
         'receiver_account_number' => 'SA6980000204608016211111',
         'receiver_bank_code' => 'FDCSSARI',
         'beneficiary_name' => 'Jane Doe',
-        'amount' => 32,
+        'amount' => $amount,
         'currency' => 'SAR',
         'reference' => '78472FDCSSARI8798',
         'payment_type' => $paymentType,
         'charge_details' => $chargeDetails,
-        'notes' => ['Payment for services', 'Invoice #12345'],
+        'notes' => $setNotes ? ['Payment for services', 'Invoice #12345'] : [],
 
     ]);
 }
@@ -46,7 +51,7 @@ it('successfully returns the xml', function () {
         ->and($xml->TransferInfo->Date)
         ->toEqual($this->testDateTime)
         ->and($xml->TransferInfo->Amount)
-        ->toEqual("32.00")
+        ->toEqual("50.00")
         ->and($xml->TransferInfo->Currency)
         ->toEqual('SAR')
         // Later we will get the account number from the client
@@ -66,4 +71,14 @@ it('successfully returns the xml', function () {
         ->toEqual('5664')
         ->and($xml->ChargeDetails)
         ->toEqual('RAS');
+});
+
+it('tests insufficient balance', function () {
+    $response = transferRequest($this->client->id, 5876389704.00);
+
+    $response
+        ->assertStatus(400)
+        ->assertJson([
+            'error' => 'Insufficient balance'
+        ]);
 });

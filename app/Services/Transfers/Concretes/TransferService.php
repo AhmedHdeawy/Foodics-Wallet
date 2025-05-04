@@ -2,10 +2,12 @@
 
 namespace App\Services\Transfers\Concretes;
 
+use App\Exceptions\InsufficientBalance;
 use App\Services\Clients\Contracts\ClientServiceContract;
 use App\Services\Transfers\Contracts\TransferServiceContract;
 use App\Services\TransferXmlBuilder\Contracts\TransferXmlBuilderContract;
 use App\Utils\Helper;
+use Exception;
 use InvalidArgumentException;
 use Random\RandomException;
 
@@ -21,7 +23,7 @@ class TransferService implements TransferServiceContract
     ) {}
 
     /**
-     * @throws RandomException
+     * @throws RandomException|InsufficientBalance
      */
     public function transferMoney(array $data): string
     {
@@ -29,7 +31,7 @@ class TransferService implements TransferServiceContract
 
         // Check if client has sufficient balance
         if ($client->balance < $data['amount']) {
-            throw new InvalidArgumentException('Insufficient balance', 400);
+            throw new InsufficientBalance;
         }
 
         return $this->generateXml($data);
