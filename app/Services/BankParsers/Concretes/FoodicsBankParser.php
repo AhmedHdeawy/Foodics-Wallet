@@ -51,11 +51,12 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
 
     public function mapLineToTransaction(string $line): TransactionData
     {
+        $this->checkLineHasTwoHashCharacter($line);
+
         // Split by # separator
         $parts = explode('#', $line);
-        if (count($parts) < 2) {
-            throw new InvalidArgumentException('Invalid transaction format: '.$line);
-        }
+        $this->checkPartsCount($parts, $line);
+        $this->checkDateAmountPart($parts[0]);
 
         $date = $this->parseDate($parts[0]);
         $amount = $this->prepareAmount($parts[0]);

@@ -9,7 +9,6 @@ use App\Services\BankParsers\Contracts\MapLineToTransactionContract;
 use App\Traits\ParserChecks;
 use Carbon\Carbon;
 use Exception;
-use InvalidArgumentException;
 
 class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
 {
@@ -51,11 +50,11 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
 
     public function mapLineToTransaction(string $line): TransactionData
     {
+        $this->checkLineHasTwoSlashesCharacter($line);
+
         // Split by // separator
         $parts = explode('//', $line);
-        if (count($parts) < 3) {
-            throw new InvalidArgumentException('Invalid transaction format: '.$line);
-        }
+        $this->checkPartsCount($parts, $line, 3);
 
         $amount = $this->prepareAmount($parts[0]);
         $reference = $parts[1];
