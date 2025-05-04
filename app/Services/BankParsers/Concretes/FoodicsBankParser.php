@@ -74,9 +74,13 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
         }
 
         try {
-            $date = substr($value, 0, 8);
+            $date = Carbon::parse(substr($value, 0, 8));
 
-            return Carbon::parse($date);
+            if ($date->greaterThan(Carbon::today())) {
+                throw new InvalidArgumentException('Date cannot be in the future: '.$date);
+            }
+
+            return $date;
         } catch (Exception) {
             throw new InvalidArgumentException("Cannot parse date: $value");
         }

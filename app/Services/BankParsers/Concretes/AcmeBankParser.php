@@ -72,7 +72,13 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
             throw new InvalidArgumentException('Date format is invalid: '.$value);
         }
 
-        return Carbon::parse($value);
+        $date = Carbon::parse($value);
+
+        if ($date->greaterThan(Carbon::today())) {
+            throw new InvalidArgumentException('Date cannot be in the future: '.$date);
+        }
+
+        return $date;
     }
 
     private function prepareAmount(string $value): float

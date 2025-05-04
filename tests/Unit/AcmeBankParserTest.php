@@ -7,21 +7,21 @@ use App\Services\BankParsers\Concretes\AcmeBankParser;
 it('parses valid webhook with one transaction', function () {
     $parser = new AcmeBankParser();
 
-    $webhookData = "156,50//202506159000001//20250615";
+    $webhookData = "156,50//202504159000001//20250415";
 
     $transactions = $parser->parseTransactions($webhookData);
 
     expect($transactions)->toHaveCount(1)
         ->and($transactions[0]['amount'])->toBe(156.50)
-        ->and($transactions[0]['reference'])->toBe('202506159000001')
-        ->and($transactions[0]['transaction_date'])->toBe('2025-06-15')
+        ->and($transactions[0]['reference'])->toBe('202504159000001')
+        ->and($transactions[0]['transaction_date'])->toBe('2025-04-15')
         ->and($transactions[0]['bank_name'])->toBe(Bank::ACME->value);
 });
 
 it('maps the line to transaction DTO', function () {
     $parser = new AcmeBankParser();
 
-    $webhookData = "156,50//202506159000001//20250615";
+    $webhookData = "156,50//202504159000001//20250415";
 
     $transaction = $parser->mapLineToTransaction($webhookData);
 
@@ -32,7 +32,7 @@ it('maps the line to transaction DTO', function () {
 it('parses valid webhook with multiple transaction', function () {
     $parser = new AcmeBankParser();
 
-    $webhookData = "156,50//202506159000001//20250615\n".
+    $webhookData = "156,50//202504159000001//20250415\n".
         "7623,88//2024110556873465//20241105";
 
     $transactions = $parser->parseTransactions($webhookData);
@@ -41,8 +41,8 @@ it('parses valid webhook with multiple transaction', function () {
 
     $firstTransaction = $transactions[0];
     expect($firstTransaction['amount'])->toBe(156.50)
-        ->and($firstTransaction['reference'])->toBe('202506159000001')
-        ->and($firstTransaction['transaction_date'])->toBe('2025-06-15')
+        ->and($firstTransaction['reference'])->toBe('202504159000001')
+        ->and($firstTransaction['transaction_date'])->toBe('2025-04-15')
         ->and($firstTransaction['bank_name'])->toBe(Bank::ACME->value);
 
     $secondTransaction = $transactions[1];
@@ -55,7 +55,7 @@ it('parses valid webhook with multiple transaction', function () {
 it('skips the invalid lines', function () {
     $parser = new AcmeBankParser();
 
-    $webhookData = "156,50//202506159000001//20250615\n".
+    $webhookData = "156,50//202504159000001//20250415\n".
         "invalid transaction\n".
         "6,34//20230412576342//20230412\n".
         "20251315156,50";
@@ -66,8 +66,8 @@ it('skips the invalid lines', function () {
 
     $firstTransaction = $transactions[0];
     expect($firstTransaction['amount'])->toBe(156.50)
-        ->and($firstTransaction['reference'])->toBe('202506159000001')
-        ->and($firstTransaction['transaction_date'])->toBe('2025-06-15')
+        ->and($firstTransaction['reference'])->toBe('202504159000001')
+        ->and($firstTransaction['transaction_date'])->toBe('2025-04-15')
         ->and($firstTransaction['bank_name'])->toBe(Bank::ACME->value);
 
     $secondTransaction = $transactions[1];
