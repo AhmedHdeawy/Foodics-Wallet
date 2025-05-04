@@ -153,12 +153,46 @@ class TransferXmlBuilder implements TransferXmlBuilderContract
     }
 
     /**
+     * Validate that all required fields are set
+     *
+     * @throws InvalidArgumentException
+     */
+    private function validate(): void
+    {
+        $requiredFields = [
+            'reference' => $this->reference ?? null,
+            'date' => $this->date ?? null,
+            'amount' => $this->amount ?? null,
+            'currency' => $this->currency ?? null,
+            'senderAccountNumber' => $this->senderAccountNumber ?? null,
+            'receiverBankCode' => $this->receiverBankCode ?? null,
+            'receiverAccountNumber' => $this->receiverAccountNumber ?? null,
+            'beneficiaryName' => $this->beneficiaryName ?? null,
+        ];
+
+        $missingFields = [];
+        foreach ($requiredFields as $field => $value) {
+            if ($value === null) {
+                $missingFields[] = $field;
+            }
+        }
+
+        if (!empty($missingFields)) {
+            throw new InvalidArgumentException(
+                'The following required fields are missing: '.implode(', ', $missingFields)
+            );
+        }
+    }
+
+    /**
      * Build the XML
      *
      * @throws InvalidArgumentException
      */
     public function build(): string
     {
+        $this->validate();
+
         // Create the root XML element
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><PaymentRequestMessage></PaymentRequestMessage>');
 
