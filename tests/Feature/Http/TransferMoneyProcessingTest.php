@@ -114,3 +114,19 @@ it('does not have payment type tag if its value 99', function () {
         ->and($xml->PaymentType)
         ->toBeEmpty();
 });
+
+it('does not have charge details tag if its value SHA', function () {
+    $response = transferRequest($this->client->id, 50, false, '100', 'SHA');
+    $xml = simplexml_load_string($response->getContent());
+
+    $response
+        ->assertStatus(200)
+        ->assertHeader('Content-Type', 'application/xml');
+
+    expect($xml->getName())->toBe('PaymentRequestMessage')
+        ->toHaveAttribute('PaymentRequestMessage')
+        ->and($xml->TransferInfo->Reference)
+        ->toEqual('78472FDCSSARI8798')
+        ->and($xml->ChargeDetails)
+        ->toBeEmpty();
+});
