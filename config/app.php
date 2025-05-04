@@ -130,4 +130,9 @@ return [
         'time_window' => env('WEBHOOK_RATE_LIMIT_TIME_WINDOW', 1),
     ],
 
+    'transfer_rate_limit' => [
+        'max_requests' => env('TRANSFER_RATE_LIMIT_MAX_REQUESTS', 5),
+        'time_window' => env('TRANSFER_RATE_LIMIT_TIME_WINDOW', 1),
+    ],
+
 ];

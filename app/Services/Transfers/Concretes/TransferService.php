@@ -47,7 +47,7 @@ class TransferService implements TransferServiceContract
             ->setAmount($data['amount'])
             ->setCurrency($data['currency'] ?? 'SAR')
             // Later we will get the account number from the client
-            ->setSenderAccountNumber(random_int(23432434, 54395385743853))
+            ->setSenderAccountNumber((string) random_int(23432434, 54395385743853))
             ->setReceiverBankCode($data['receiver_bank_code'])
             ->setReceiverAccountNumber($data['receiver_account_number'])
             ->setBeneficiaryName($data['beneficiary_name']);
@@ -62,11 +62,11 @@ class TransferService implements TransferServiceContract
             }
         }
 
-        if (!in_array($data['payment_type'], self::NOT_ALLOWED_PAYMENT_TYPES)) {
+        if (isset($data['payment_type']) && !in_array($data['payment_type'], self::NOT_ALLOWED_PAYMENT_TYPES)) {
             $xmlBuilder->setPaymentType($data['payment_type']);
         }
 
-        if (!in_array($data['charge_details'], self::NOT_ALLOWED_CHARGE_DETAILS)) {
+        if (isset($data['charge_details']) && !in_array($data['charge_details'], self::NOT_ALLOWED_CHARGE_DETAILS)) {
             $xmlBuilder->setChargeDetails($data['charge_details']);
         }
 

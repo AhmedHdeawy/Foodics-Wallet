@@ -19,8 +19,8 @@ class TransferXmlBuilder implements TransferXmlBuilderContract
     private string $receiverAccountNumber;
     private string $beneficiaryName;
     private array $notes = [];
-    private ?string $paymentType;
-    private ?string $chargeDetails;
+    private string $paymentType;
+    private string $chargeDetails;
 
     /**
      * Set the reference

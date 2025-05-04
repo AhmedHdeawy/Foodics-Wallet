@@ -62,7 +62,10 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('transfer', function (Request $request) {
             // Later, We can improve this by using the bank name or client id.
-            return Limit::perMinute(5)->by($request->ip());
+            return Limit::perMinutes(
+                decayMinutes: config('app.transfer_rate_limit.time_window'),
+                maxAttempts: config('app.transfer_rate_limit.max_requests'),
+            )->by($request->ip());
         });
     }
 }
