@@ -4,13 +4,12 @@ namespace App\Services\Webhooks\Concretes;
 
 use App\Jobs\ProcessWebhook;
 use App\Models\Webhook;
+use App\Repositories\Webhook\Contracts\WebhookRepositoryContract;
 use App\Services\BankParsers\Concretes\BankParserFactory;
 use App\Services\Clients\Contracts\ClientServiceContract;
 use App\Services\Transactions\Contracts\TransactionServiceContract;
 use App\Services\Webhooks\Contracts\WebhookServiceContract;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class WebhookService implements WebhookServiceContract
@@ -18,7 +17,8 @@ class WebhookService implements WebhookServiceContract
     public function __construct(
         protected BankParserFactory $bankParserFactory,
         protected TransactionServiceContract $transactionService,
-        protected ClientServiceContract $clientService
+        protected ClientServiceContract $clientService,
+        protected WebhookRepositoryContract $webhookRepository
     ) {
     }
 
@@ -28,10 +28,9 @@ class WebhookService implements WebhookServiceContract
          * For alternative webhook processing strategies and implementation options,
          * Please refer to the "Scalability and Webhook Processing Options" section in the README file.
          */
-
         $this->clientService->validateClient($data['client_id']);
 
-        $webhookId = DB::table('webhooks')->insertGetId($this->prepareWebhookData($data));
+        $webhookId = $this->webhookRepository->storeNewWebhookAndGetId($this->prepareWebhookData($data));
 
         ProcessWebhook::dispatch($webhookId);
 
@@ -43,25 +42,26 @@ class WebhookService implements WebhookServiceContract
      */
     public function processWebhook(int $webhookId): void
     {
-        $webhook = Webhook::query()->findOrFail($webhookId, ['id', 'client_id', 'raw_data', 'bank_name']);
+        /** @var Webhook $webhook */
+        $webhook = $this->webhookRepository->findOrFail($webhookId, ['id', 'client_id', 'raw_data', 'bank_name']);
 
         if ($webhook->doNotProcess()) {
             return;
         }
 
         try {
-            $webhook->markAsProcessing();
+            $this->webhookRepository->markAsProcessing($webhook);
 
             $parser = $this->bankParserFactory->getParser($webhook->bank_name);
             $transactions = $parser->parseTransactions($webhook->raw_data, $webhook->client_id);
 
             $this->transactionService->processTransactions($transactions);
 
-            $webhook->markAsProcessed();
+            $this->webhookRepository->markAsProcessed($webhook);
 
             $this->clientService->updateBalance($webhook->client_id);
         } catch (Exception $e) {
-            $webhook->markAsFailed();
+            $this->webhookRepository->markAsFailed($webhook, $e->getMessage());
             Log::error("Error processing webhook $webhook->id: {$e->getMessage()}", [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -75,22 +75,12 @@ class WebhookService implements WebhookServiceContract
      */
     public function processPendingWebhooks(int $limit): void
     {
-        $webhooks = $this->getPendingWebhooks($limit);
+        $webhooks = $this->webhookRepository->getPendingWebhooks($limit, ['id']);
 
         foreach ($webhooks as $webhook) {
             /** @var Webhook $webhook */
             ProcessWebhook::dispatch($webhook->id);
         }
-    }
-
-    /**
-     * Get pending webhooks
-     */
-    public function getPendingWebhooks(int $limit = 1000): Collection
-    {
-        return Webhook::pending()
-            ->limit($limit)
-            ->get(['id']);
     }
 
     private function prepareWebhookData(array $data): array
@@ -106,7 +96,8 @@ class WebhookService implements WebhookServiceContract
 
     public function getWebhookStatus(int $id): string
     {
-        $webhook = Webhook::query()->findOrFail($id, ['status']);
+        /** @var Webhook $webhook */
+        $webhook = $this->webhookRepository->findOrFail($id, ['status']);
 
         return $webhook->status->value;
     }

@@ -9,7 +9,6 @@ use App\Services\Transactions\Contracts\TransactionServiceContract;
 
 class ClientService implements ClientServiceContract
 {
-
     public function __construct(
         protected TransactionServiceContract $transactionService,
         protected ClientRepositoryContract $clientRepository
