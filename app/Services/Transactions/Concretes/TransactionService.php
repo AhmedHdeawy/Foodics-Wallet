@@ -36,6 +36,7 @@ class TransactionService implements TransactionServiceContract
 
             /**
              * the other way to do this and ensure uniqueness is to use the unique identifier.
+             * Please refer to the "Duplicate Transaction Prevention" section in the README file.
              */
             // $this->processTransactionsUsingUniqueIdentifier($transactions);
 
@@ -69,4 +70,11 @@ class TransactionService implements TransactionServiceContract
     //         Transaction::query()->insertOrIgnore($newTransactions);
     //     }
     // }
+
+    public function sumClientBalance(int $clientId): float
+    {
+        return Transaction::query()
+            ->where('client_id', $clientId)
+            ->sum('amount');
+    }
 }

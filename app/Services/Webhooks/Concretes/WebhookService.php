@@ -19,10 +19,16 @@ class WebhookService implements WebhookServiceContract
         protected BankParserFactory $bankParserFactory,
         protected TransactionServiceContract $transactionService,
         protected ClientServiceContract $clientService
-    ) {}
+    ) {
+    }
 
     public function handleReceivedWebhook(array $data): int
     {
+        /*
+         * For alternative webhook processing strategies and implementation options,
+         * Please refer to the "Scalability and Webhook Processing Options" section in the README file.
+         */
+
         $this->clientService->validateClient($data['client_id']);
 
         $webhookId = DB::table('webhooks')->insertGetId($this->prepareWebhookData($data));
@@ -52,6 +58,8 @@ class WebhookService implements WebhookServiceContract
             $this->transactionService->processTransactions($transactions);
 
             $webhook->markAsProcessed();
+
+            $this->clientService->updateBalance($webhook->client_id);
         } catch (Exception $e) {
             $webhook->markAsFailed();
             Log::error("Error processing webhook $webhook->id: {$e->getMessage()}", [
