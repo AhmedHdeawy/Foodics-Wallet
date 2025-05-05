@@ -58,6 +58,8 @@ class WebhookService implements WebhookServiceContract
             $this->transactionService->processTransactions($transactions);
 
             $webhook->markAsProcessed();
+
+            $this->clientService->updateBalance($webhook->client_id);
         } catch (Exception $e) {
             $webhook->markAsFailed();
             Log::error("Error processing webhook $webhook->id: {$e->getMessage()}", [

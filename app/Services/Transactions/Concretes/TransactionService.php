@@ -70,4 +70,11 @@ class TransactionService implements TransactionServiceContract
     //         Transaction::query()->insertOrIgnore($newTransactions);
     //     }
     // }
+
+    public function sumClientBalance(int $clientId): float
+    {
+        return Transaction::query()
+            ->where('client_id', $clientId)
+            ->sum('amount');
+    }
 }
