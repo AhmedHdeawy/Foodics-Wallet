@@ -9,6 +9,7 @@ A Laravel-based wallet application that processes incoming bank webhooks and gen
 - Generate transfer XML with conditional elements
 - Comprehensive testing including performance tests for large transaction volumes
 - Rate limit webhook APIs to prevent abuse
+- Race condition prevention using cache locks when transferring money
 
 ## Technical Implementation
 
