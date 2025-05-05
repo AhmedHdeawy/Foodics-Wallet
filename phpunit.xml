@@ -17,6 +17,11 @@
             <directory>app</directory>
         </include>
     </source>
+    <groups>
+        <exclude>
+            <group>performance</group>
+        </exclude>
+    </groups>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
@@ -28,5 +33,6 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="WEBHOOK_RATE_LIMIT_MAX_REQUESTS" value="4"/>
     </php>
 </phpunit>

@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'ingestion_paused' => env('INGESTION_PAUSED', false),
+
+    'webhook_rate_limit' => [
+        'max_requests' => env('WEBHOOK_RATE_LIMIT_MAX_REQUESTS', 500),
+        'time_window' => env('WEBHOOK_RATE_LIMIT_TIME_WINDOW', 1),
+    ],
+
+    'transfer_rate_limit' => [
+        'max_requests' => env('TRANSFER_RATE_LIMIT_MAX_REQUESTS', 5),
+        'time_window' => env('TRANSFER_RATE_LIMIT_TIME_WINDOW', 1),
+    ],
+
 ];
