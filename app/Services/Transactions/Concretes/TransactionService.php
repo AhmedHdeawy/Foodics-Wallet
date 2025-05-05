@@ -2,13 +2,15 @@
 
 namespace App\Services\Transactions\Concretes;
 
-use App\Models\Transaction;
+use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
 use App\Services\Transactions\Contracts\TransactionServiceContract;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class TransactionService implements TransactionServiceContract
 {
+    public function __construct(protected TransactionRepositoryContract $transactionRepository)
+    {
+    }
+
     /**
      * Process transactions in chunks
      */
@@ -26,22 +28,18 @@ class TransactionService implements TransactionServiceContract
      */
     private function processTransactionChunk(array $transactions): void
     {
-        DB::transaction(function () use ($transactions) {
-            /**
-             * This is the simplest way to insert transactions in bulk.
-             * it uses the DB unique constraint to ensure that no duplicates are inserted.
-             * See the migration file for the unique index.
-             */
-            Transaction::query()->insertOrIgnore($transactions);
+        /**
+         * This is the simplest way to insert transactions in bulk.
+         * it uses the DB unique constraint to ensure that no duplicates are inserted.
+         * See the migration file for the unique index.
+         */
+        $this->transactionRepository->insertTransactionsChunk($transactions);
 
-            /**
-             * the other way to do this and ensure uniqueness is to use the unique identifier.
-             * Please refer to the "Duplicate Transaction Prevention" section in the README file.
-             */
-            // $this->processTransactionsUsingUniqueIdentifier($transactions);
-
-            Log::info('Batch processed '.count($transactions).' new transactions');
-        });
+        /**
+         * the other way to do this and ensure uniqueness is to use the unique identifier.
+         * Please refer to the "Duplicate Transaction Prevention" section in the README file.
+         */
+        // $this->processTransactionsUsingUniqueIdentifier($transactions);
     }
 
     // private function processTransactionsUsingUniqueIdentifier(array $transactions): void
@@ -59,7 +57,7 @@ class TransactionService implements TransactionServiceContract
     //     $newTransactions = array_values(array_filter($transactions, function ($transaction) use ($existingIdentifiers) {
     //         if (in_array($transaction['unique_identifier'], $existingIdentifiers)) {
     //             // We could store the duplicate transactions in the database for further analysis
-    //             Log::info("Skipping duplicate transaction: {$transaction['reference']}");
+    //             logger()->info("Skipping duplicate transaction: {$transaction['reference']}");
     //             return false;
     //         }
     //
@@ -67,14 +65,12 @@ class TransactionService implements TransactionServiceContract
     //     }));
     //
     //     if (!empty($newTransactions)) {
-    //         Transaction::query()->insertOrIgnore($newTransactions);
+    //         $this->transactionRepository->insertTransactionsChunk($newTransactions);
     //     }
     // }
 
     public function sumClientBalance(int $clientId): float
     {
-        return Transaction::query()
-            ->where('client_id', $clientId)
-            ->sum('amount');
+        return $this->transactionRepository->sumClientBalance($clientId);
     }
 }
