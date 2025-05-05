@@ -6,6 +6,9 @@ use App\Exceptions\InsufficientBalance;
 use App\Services\Clients\Contracts\ClientServiceContract;
 use App\Services\Transfers\Contracts\TransferServiceContract;
 use App\Services\TransferXmlBuilder\Contracts\TransferXmlBuilderContract;
+use Exception;
+use Illuminate\Contracts\Cache\Lock;
+use Illuminate\Support\Facades\Cache;
 use Random\RandomException;
 
 class TransferService implements TransferServiceContract
@@ -20,9 +23,42 @@ class TransferService implements TransferServiceContract
     ) {}
 
     /**
-     * @throws RandomException|InsufficientBalance
+     * @throws InsufficientBalance
+     * @throws Exception
      */
     public function transferMoney(array $data): string
+    {
+        $lock = $this->handleRaceCondition($data);
+
+        try {
+            $this->checkIfTransferIsValid($data);
+
+            $xml = $this->generateXml($data);
+        } finally {
+            $lock->release();
+        }
+
+        return $xml;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function handleRaceCondition(array $data): Lock
+    {
+        $lockKey = 'transfer_lock_'.$data['client_id'].'_'.$data['receiver_account_number'];
+        $lock = Cache::lock($lockKey, 2);
+        if (! $lock->get()) {
+            throw new Exception('Another transaction with the same account is in progress, please try again later.');
+        }
+
+        return $lock;
+    }
+
+    /**
+     * @throws InsufficientBalance
+     */
+    private function checkIfTransferIsValid(array $data): void
     {
         $client = $this->clientService->validateClient($data['client_id'], ['id', 'balance']);
 
@@ -30,8 +66,6 @@ class TransferService implements TransferServiceContract
         if ($client->balance < $data['amount']) {
             throw new InsufficientBalance;
         }
-
-        return $this->generateXml($data);
     }
 
     /**
