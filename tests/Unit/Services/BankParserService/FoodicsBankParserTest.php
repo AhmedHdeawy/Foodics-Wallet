@@ -2,10 +2,12 @@
 
 use App\DTOs\TransactionData;
 use App\Enums\Bank;
+use App\Models\Client;
 use App\Services\BankParsers\Concretes\FoodicsBankParser;
 use Carbon\Carbon;
 
 beforeEach(function () {
+    $this->clientId = Client::factory()->create()->id;
     $this->parser = new FoodicsBankParser;
     $this->validSingleTransaction = '20250415156,50#202504159000001#note/debt payment march/internal_reference/A462JE81';
     $this->validMultipleTransactions = "20250415156,50#202504159000001#note/debt payment march/internal_reference/A462JE81\n"
@@ -13,7 +15,7 @@ beforeEach(function () {
 });
 
 it('parses valid webhook with one transaction', function () {
-    $transactions = $this->parser->parseTransactions($this->validSingleTransaction);
+    $transactions = $this->parser->parseTransactions($this->validSingleTransaction, $this->clientId);
 
     expect($transactions)->toHaveCount(1)
         ->and($transactions[0]['amount'])->toBe(156.50)
@@ -32,6 +34,7 @@ it('parses valid webhook with one transaction', function () {
 });
 
 it('maps the line to transaction DTO', function () {
+    $this->parser->clientId = $this->clientId;
     $transaction = $this->parser->mapLineToTransaction($this->validSingleTransaction);
 
     expect($transaction)->toBeInstanceOf(TransactionData::class);
@@ -43,7 +46,7 @@ it('maps the line to transaction DTO', function () {
 });
 
 it('parses valid webhook with multiple transaction', function () {
-    $transactions = $this->parser->parseTransactions($this->validMultipleTransactions);
+    $transactions = $this->parser->parseTransactions($this->validMultipleTransactions, $this->clientId);
 
     expect($transactions)->toHaveCount(2);
 
@@ -87,7 +90,7 @@ it('skips invalid lines when parsing transactions', function () {
         "20250416200,00#202504169000002#note/salary payment\n".
         '20251315156,50';
 
-    $transactions = $this->parser->parseTransactions($webhookData);
+    $transactions = $this->parser->parseTransactions($webhookData, $this->clientId);
 
     expect($transactions)->toHaveCount(2)
         ->and($transactions[0]['reference'])->toBe('202504159000001')
@@ -100,7 +103,7 @@ it('skips transactions with dates in the future', function () {
     $webhookData = "{$futureDate}156,50#{$futureDate}9000001#note/debt payment march/internal_reference/A462JE81\n".
         "20250416200,00#202506169000002#note/salary payment\n";
 
-    $transactions = $this->parser->parseTransactions($webhookData);
+    $transactions = $this->parser->parseTransactions($webhookData, $this->clientId);
 
     expect($transactions)->toHaveCount(1)
         ->and($transactions[0]['reference'])->toBe('202506169000002')
@@ -111,7 +114,7 @@ it('skips transactions with negative amount', function () {
     $webhookData = "20250415-156,50#202504159000001#note/debt payment march/internal_reference/A462JE81\n".
         "20250416200,00#202506169000002#note/salary payment\n";
 
-    $transactions = $this->parser->parseTransactions($webhookData);
+    $transactions = $this->parser->parseTransactions($webhookData, $this->clientId);
 
     expect($transactions)->toHaveCount(1)
         ->and($transactions[0]['amount'])->toBe(200.00)
@@ -119,10 +122,10 @@ it('skips transactions with negative amount', function () {
 });
 
 it('handles empty webhook', function () {
-    $transactions = $this->parser->parseTransactions('');
+    $transactions = $this->parser->parseTransactions('', $this->clientId);
     expect($transactions)->toBeArray()->toBeEmpty();
 
-    $transactions = $this->parser->parseTransactions('   ');
+    $transactions = $this->parser->parseTransactions('   ', $this->clientId);
     expect($transactions)->toBeArray()->toBeEmpty();
 });
 
@@ -140,7 +143,7 @@ it('handles malformed input', function () {
     ];
 
     foreach ($malformedInputs as $input) {
-        $transactions = $this->parser->parseTransactions($input);
+        $transactions = $this->parser->parseTransactions($input, $this->clientId);
         expect($transactions)->toBeEmpty();
     }
 });

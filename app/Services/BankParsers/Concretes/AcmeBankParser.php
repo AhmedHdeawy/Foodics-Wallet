@@ -14,7 +14,7 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
 {
     use ParserChecks;
 
-    protected int $clientId;
+    public int $clientId;
 
     /**
      * Format: Amount (two decimals), "//", Reference, "//", Date

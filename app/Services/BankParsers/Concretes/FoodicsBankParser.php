@@ -15,7 +15,7 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
 {
     use ParserChecks;
 
-    protected int $clientId;
+    public int $clientId;
 
     /**
      * Format: Date, Amount (two decimals), "#", Reference, "#", Key-value pairs
