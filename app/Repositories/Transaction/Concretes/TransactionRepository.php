@@ -35,5 +35,4 @@ class TransactionRepository extends BaseRepository implements TransactionReposit
             ->where('client_id', $clientId)
             ->sum('amount');
     }
-
 }

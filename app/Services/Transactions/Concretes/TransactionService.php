@@ -7,9 +7,7 @@ use App\Services\Transactions\Contracts\TransactionServiceContract;
 
 class TransactionService implements TransactionServiceContract
 {
-    public function __construct(protected TransactionRepositoryContract $transactionRepository)
-    {
-    }
+    public function __construct(protected TransactionRepositoryContract $transactionRepository) {}
 
     /**
      * Process transactions in chunks

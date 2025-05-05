@@ -3,7 +3,6 @@
 use App\Enums\Bank;
 use App\Models\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
 use Illuminate\Support\Benchmark;
 
 use function Pest\Laravel\call;

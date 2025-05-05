@@ -17,5 +17,4 @@ interface WebhookRepositoryContract extends BaseRepositoryContract
     public function markAsProcessed(Webhook $webhook): void;
 
     public function markAsFailed(Webhook $webhook, ?string $errorMessage = null): void;
-
 }

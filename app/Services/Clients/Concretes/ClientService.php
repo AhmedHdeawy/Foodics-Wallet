@@ -12,8 +12,7 @@ class ClientService implements ClientServiceContract
     public function __construct(
         protected TransactionServiceContract $transactionService,
         protected ClientRepositoryContract $clientRepository
-    ) {
-    }
+    ) {}
 
     public function validateClient(int $client_id, array $columns = []): Client
     {
@@ -23,6 +22,7 @@ class ClientService implements ClientServiceContract
          * @var Client $client
          */
         $client = $this->clientRepository->findOrFail($client_id, $columns ?: ['id']);
+
         return $client;
     }
 

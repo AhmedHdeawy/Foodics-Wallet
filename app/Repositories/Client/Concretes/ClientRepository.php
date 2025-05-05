@@ -15,5 +15,4 @@ class ClientRepository extends BaseRepository implements ClientRepositoryContrac
     {
         return Client::class;
     }
-
 }

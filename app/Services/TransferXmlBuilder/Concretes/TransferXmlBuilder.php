@@ -177,7 +177,7 @@ class TransferXmlBuilder implements TransferXmlBuilderContract
             }
         }
 
-        if (!empty($missingFields)) {
+        if (! empty($missingFields)) {
             throw new InvalidArgumentException(
                 'The following required fields are missing: '.implode(', ', $missingFields)
             );

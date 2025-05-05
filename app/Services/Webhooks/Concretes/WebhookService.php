@@ -19,8 +19,7 @@ class WebhookService implements WebhookServiceContract
         protected TransactionServiceContract $transactionService,
         protected ClientServiceContract $clientService,
         protected WebhookRepositoryContract $webhookRepository
-    ) {
-    }
+    ) {}
 
     public function handleReceivedWebhook(array $data): int
     {

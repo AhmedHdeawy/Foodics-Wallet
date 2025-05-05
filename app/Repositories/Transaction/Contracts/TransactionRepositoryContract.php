@@ -9,5 +9,4 @@ interface TransactionRepositoryContract extends BaseRepositoryContract
     public function insertTransactionsChunk(array $transactions): void;
 
     public function sumClientBalance(int $clientId): float;
-
 }
