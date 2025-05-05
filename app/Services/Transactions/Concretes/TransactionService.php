@@ -36,6 +36,7 @@ class TransactionService implements TransactionServiceContract
 
             /**
              * the other way to do this and ensure uniqueness is to use the unique identifier.
+             * Please refer to the "Duplicate Transaction Prevention" section in the README file.
              */
             // $this->processTransactionsUsingUniqueIdentifier($transactions);
 
