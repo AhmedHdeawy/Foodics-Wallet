@@ -15,16 +15,20 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
 {
     use ParserChecks;
 
+    protected int $clientId;
+
     /**
      * Format: Date, Amount (two decimals), "#", Reference, "#", Key-value pairs
      * Example: 20250615156,50#202506159000001#note/debt payment march/internal_reference/A462JE81
      *
      * @param  string  $webhookData  Raw webhook data
+     * @param  int  $clientId
      * @return array of parsed transactions
      */
-    public function parseTransactions(string $webhookData): array
+    public function parseTransactions(string $webhookData, int $clientId): array
     {
         $transactions = [];
+        $this->clientId = $clientId;
         $lines = explode("\n", trim($webhookData));
 
         foreach ($lines as $line) {
@@ -63,7 +67,7 @@ class FoodicsBankParser implements BankParserContract, MapLineToTransactionContr
         $reference = $parts[1];
         $meta = $this->parseMetaData($parts);
 
-        return new TransactionData($reference, $amount, $date, $this->getBankName(), $meta);
+        return new TransactionData($reference, $amount, $date, $this->getBankName(), $meta, $this->clientId);
     }
 
     public function getBankName(): string

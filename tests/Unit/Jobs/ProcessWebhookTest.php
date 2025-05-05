@@ -14,6 +14,10 @@ beforeEach(function () {
     $this->client = Client::factory()->create(['id' => 1]);
 });
 
+afterEach(function () {
+    Mockery::close();
+});
+
 it('successfully handles foodics webhook', closure: function () {
     $foodicsWebhook = Webhook::factory()->create([
         'client_id' => $this->client->id,

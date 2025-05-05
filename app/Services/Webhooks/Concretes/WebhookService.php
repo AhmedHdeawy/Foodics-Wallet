@@ -47,7 +47,7 @@ class WebhookService implements WebhookServiceContract
             $webhook->markAsProcessing();
 
             $parser = $this->bankParserFactory->getParser($webhook->bank_name);
-            $transactions = $parser->parseTransactions($webhook->raw_data);
+            $transactions = $parser->parseTransactions($webhook->raw_data, $webhook->client_id);
 
             $this->transactionService->processTransactions($transactions);
 

@@ -14,6 +14,8 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
 {
     use ParserChecks;
 
+    protected int $clientId;
+
     /**
      * Format: Amount (two decimals), "//", Reference, "//", Date
      * Example: 156,50//202506159000001//20250615
@@ -21,9 +23,10 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
      * @param  string  $webhookData  Raw webhook data
      * @return array Array of parsed transactions
      */
-    public function parseTransactions(string $webhookData): array
+    public function parseTransactions(string $webhookData, int $clientId): array
     {
         $transactions = [];
+        $this->clientId = $clientId;
         $lines = explode("\n", trim($webhookData));
 
         foreach ($lines as $line) {
@@ -60,7 +63,7 @@ class AcmeBankParser implements BankParserContract, MapLineToTransactionContract
         $reference = $parts[1];
         $date = $this->parseDate($parts[2]);
 
-        return new TransactionData($reference, $amount, $date, $this->getBankName());
+        return new TransactionData($reference, $amount, $date, $this->getBankName(), null, $this->clientId);
     }
 
     public function getBankName(): string
