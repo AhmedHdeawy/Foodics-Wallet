@@ -23,7 +23,7 @@ it('successfully handles foodics webhook', closure: function () {
         'client_id' => $this->client->id,
         'raw_data' => '20250415156,50#202504159000001#note/debt payment march/internal_reference/A462JE81',
         'bank_name' => Bank::FOODICS,
-        'status' => WebhookStatus::PENDING
+        'status' => WebhookStatus::PENDING,
     ]);
 
     $job = new ProcessWebhook($foodicsWebhook->id);
@@ -41,7 +41,7 @@ it('successfully handles acme webhook', function () {
         'client_id' => $this->client->id,
         'raw_data' => '156,50//202504159000001//20250415',
         'bank_name' => Bank::ACME,
-        'status' => WebhookStatus::PENDING
+        'status' => WebhookStatus::PENDING,
     ]);
 
     $job = new ProcessWebhook($acmeWebhook->id);

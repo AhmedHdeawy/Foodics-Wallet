@@ -51,7 +51,7 @@ it('successfully returns the xml', function () {
         ->and($xml->TransferInfo->Date)
         ->toEqual($this->testDateTime)
         ->and($xml->TransferInfo->Amount)
-        ->toEqual("50.00")
+        ->toEqual('50.00')
         ->and($xml->TransferInfo->Currency)
         ->toEqual('SAR')
         // Later we will get the account number from the client
@@ -79,7 +79,7 @@ it('tests insufficient balance', function () {
     $response
         ->assertStatus(400)
         ->assertJson([
-            'error' => 'Insufficient balance'
+            'error' => 'Insufficient balance',
         ]);
 });
 

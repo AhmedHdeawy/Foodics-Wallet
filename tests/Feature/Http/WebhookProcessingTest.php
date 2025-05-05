@@ -70,7 +70,6 @@ it('successfully receives webhook from acme bank', function () {
             ],
         ]);
 
-
     assertDatabaseHas('webhooks', [
         'client_id' => $this->client->id,
         'bank_name' => Bank::ACME->value,

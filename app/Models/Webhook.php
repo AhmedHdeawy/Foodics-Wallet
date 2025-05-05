@@ -61,28 +61,6 @@ class Webhook extends Model
         return $this->belongsTo(Client::class);
     }
 
-    public function markAsProcessing(): bool
-    {
-        return $this->update([
-            'status' => WebhookStatus::PROCESSING,
-        ]);
-    }
-
-    public function markAsProcessed(): bool
-    {
-        return $this->update([
-            'status' => WebhookStatus::PROCESSED,
-        ]);
-    }
-
-    public function markAsFailed(?string $errorMessage = null): bool
-    {
-        return $this->update([
-            'status' => WebhookStatus::FAILED,
-            'error_message' => $errorMessage,
-        ]);
-    }
-
     public function doNotProcess(): bool
     {
         return in_array($this->status, [

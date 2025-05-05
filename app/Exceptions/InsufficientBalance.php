@@ -3,8 +3,8 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponse;
-use Illuminate\Http\JsonResponse;
 use Exception;
+use Illuminate\Http\JsonResponse;
 
 class InsufficientBalance extends Exception
 {
