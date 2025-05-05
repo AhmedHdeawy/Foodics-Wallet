@@ -87,6 +87,9 @@ I implemented two approaches to ensure transaction idempotency:
 
 ## API Endpoints
 
+### Postman Collection
+- Please download the collection and import it in Postman [Collection](https://api.postman.com/collections/3113879-92af31c5-38b9-47fc-a0b4-1b4f246e33cd?access_key=PMAT-01JTG3H4X1D9B8AHQ0WK3VBMJS)
+
 ### Webhooks
 
 - `POST /api/v1/webhooks/{bank}`: Receive webhook from a bank
